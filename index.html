@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Management</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 1s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        h1 {
+            color: #343a40;
+            margin: 20px;
+            font-size: 2.5em;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+            animation: slideIn 1s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .count-status {
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeInUp 1s ease-out;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #search-bar, #selected-search-bar {
+            width: 100%;
+            max-width: 600px;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: #ffffff;
+        }
+        #search-bar:focus, #selected-search-bar:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 12px rgba(0,123,255,0.5);
+        }
+        .search-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            margin-left: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .search-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            animation: fadeInUp 1s ease-out;
+        }
+        .section h2 {
+            margin-bottom: 15px;
+            color: #007bff;
+            font-size: 1.5em;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+            animation: underline 1s ease-out;
+        }
+        @keyframes underline {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            background: #ffffff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.3s, transform 0.3s;
+            animation: fadeIn 1s ease-out;
+        }
+        li:hover {
+            background: #e9ecef;
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        .client-info {
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
+        }
+        .client-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #343a40;
+            margin-left: 10px;
+        }
+        .voter-id {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-left: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #28a745;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            margin: 5px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .btn:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <h1>Client Management</h1>
+    <div class="count-status">
+        <div>Total Clients: <span id="total-count">0</span></div>
+        <div>Selected Clients: <span id="selected-count">0</span></div>
+        
+    </div>
+    <input type="text" id="search-bar" placeholder="Search by name or voter ID..." oninput="searchClients()">
+    
+    <div class="container">
+        <div class="section">
+            <h2>Available Clients</h2>
+            <ul id="clients-list"></ul>
+        </div>
+
+        <div class="section">
+            <h2>Selected Clients</h2>
+            <div>
+                <input type="text" id="selected-search-bar" placeholder="Search selected clients..." oninput="searchSelectedClients()">
+                <button class="search-button" onclick="searchSelectedClients()">Search</button>
+            </div>
+            <ul id="selected-clients-list"></ul>
+        </div>
+    </div>
+
+    
+    <button class="btn" onclick="downloadSelectedClients()">Download Selected Clients</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        let totalClients = 0;
+        let selectedCount = 0;
+        let removedCount = 0;
+        let allClients = [];  // Array to store all clients data
+        let removedClients = []; // Array to store removed clients
+
+        function searchClients() {
+            const query = document.getElementById('search-bar').value;
+            fetch(`/search?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    allClients = data; // Store the fetched data
+                    updateClientList(data);
+                });
+        }
+
+        function searchSelectedClients() {
+            const query = document.getElementById('selected-search-bar').value.toLowerCase();
+            const selectedClientsList = document.getElementById('selected-clients-list');
+            const clients = Array.from(selectedClientsList.children);
+
+            clients.forEach(client => {
+                const name = client.querySelector('.client-name').textContent.toLowerCase();
+                const voterId = client.querySelector('.voter-id').textContent.replace('Voter ID: ', '').toLowerCase();
+                const match = name.includes(query) || voterId.includes(query);
+
+                client.style.display = match ? '' : 'none';
+            });
+
+            updateSelectedCount(); // Update count to reflect current visible items
+        }
+
+        function updateClientList(data) {
+            const clientsList = document.getElementById('clients-list');
+            clientsList.innerHTML = '';  // Clear the list
+            totalClients = data.length;
+            document.getElementById('total-count').textContent = totalClients;
+
+            data.forEach(client => {
+                if (!isClientSelected(client['VoterID'])) {
+                    const listItem = document.createElement('li');
+
+                    const clientInfo = document.createElement('div');
+                    clientInfo.className = 'client-info';
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.onchange = function() {
+                        updateCount(this, client);
+                    };
+
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'client-name';
+                    nameSpan.textContent = client['Name'];
+
+                    const voterIdSpan = document.createElement('span');
+                    voterIdSpan.className = 'voter-id';
+                    voterIdSpan.textContent = `Voter ID: ${client['VoterID']}`;
+
+                    clientInfo.appendChild(checkbox);
+                    clientInfo.appendChild(nameSpan);
+                    clientInfo.appendChild(voterIdSpan);
+
+                    listItem.appendChild(clientInfo);
+                    clientsList.appendChild(listItem);
+                }
+            });
+
+            // Update the selected count based on current checkboxes
+            updateSelectedCount();
+        }
+
+        function updateCount(checkbox, client) {
+            const selectedClientsList = document.getElementById('selected-clients-list');
+            const itemIndex = Array.from(selectedClientsList.children).findIndex(item => 
+                item.dataset.id === client['VoterID']
+            );
+
+            if (checkbox.checked) {
+                if (itemIndex === -1) {
+                    const listItem = createClientItem(client);
+                    listItem.dataset.id = client['VoterID'];
+                    selectedClientsList.appendChild(listItem);
+                    selectedCount++;
+                }
+                totalClients--;
+                removedClients.push(client);  // Add to removed clients list
+                removedCount++;
+                document.querySelector(`#clients-list li:nth-child(${Array.from(document.querySelectorAll('#clients-list li')).findIndex(li => li.textContent.includes(client['VoterID'])) + 1}`).remove();
+            } else {
+                if (itemIndex !== -1) {
+                    selectedClientsList.children[itemIndex].remove();
+                    selectedCount--;
+                }
+                totalClients++;
+                removedClients = removedClients.filter(c => c['VoterID'] !== client['VoterID']);  // Remove from removed clients list
+                removedCount--;
+            }
+
+            updateCounts();
+        }
+
+        function createClientItem(client) {
+            const listItem = document.createElement('li');
+
+            const clientInfo = document.createElement('div');
+            clientInfo.className = 'client-info';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'client-name';
+            nameSpan.textContent = client['Name'];
+
+            const voterIdSpan = document.createElement('span');
+            voterIdSpan.className = 'voter-id';
+            voterIdSpan.textContent = `Voter ID: ${client['VoterID']}`;
+
+            clientInfo.appendChild(nameSpan);
+            clientInfo.appendChild(voterIdSpan);
+
+            listItem.appendChild(clientInfo);
+            return listItem;
+        }
+
+        function isClientSelected(voterId) {
+            return Array.from(document.getElementById('selected-clients-list').children).some(item => item.dataset.id === voterId);
+        }
+
+        function updateSelectedCount() {
+            selectedCount = document.getElementById('selected-clients-list').children.length;
+            document.getElementById('selected-count').textContent = selectedCount;
+        }
+
+        function updateCounts() {
+            document.getElementById('total-count').textContent = totalClients;
+            document.getElementById('selected-count').textContent = selectedCount;
+            document.getElementById('removed-count').textContent = removedCount;
+        }
+
+        function downloadRemovedClients() {
+            fetch('/export-removed')
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    } else {
+                        throw new Error('Failed to download file');
+                    }
+                })
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'removed_clients.xlsx';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    alert('Error downloading file: ' + error.message);
+                });
+        }
+
+        function downloadSelectedClients() {
+            const selectedClients = Array.from(document.getElementById('selected-clients-list').children).map(item => {
+                const name = item.querySelector('.client-name').textContent;
+                const voterId = item.querySelector('.voter-id').textContent.replace('Voter ID: ', '');
+                return { Name: name, VoterID: voterId };
+            });
+
+            if (selectedClients.length === 0) {
+                alert('No selected clients to download.');
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(selectedClients);
+            XLSX.utils.book_append_sheet(wb, ws, 'Selected Clients');
+
+            // Create a summary sheet for selected clients count
+            const summary = [{ Description: "Total Selected Clients", Count: selectedClients.length }];
+            const wsSummary = XLSX.utils.json_to_sheet(summary);
+            XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
+
+            XLSX.writeFile(wb, 'selected_clients.xlsx');
+        }
+
+        // Initial load
+        searchClients();
+    </script>
+</body>
+</html>
