@@ -5,178 +5,254 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client Management</title>
     <style>
+        /* Existing CSS rules */
+
+       
+        /* Existing CSS rules */
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f0f2f5;
+            background: linear-gradient(to right, #e0f7fa, #b3e5fc);
+            color: #333;
             margin: 0;
             padding: 0;
+            perspective: 1600px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            text-align: center;
+            margin: 20px 0;
+            color: #0288d1;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .btn, .scroll-btn, .scroll-to-selected-btn, .scroll-to-top-btn {
+            background: #0288d1;
+            color: white;
+            border: none;
+            padding: 14px 22px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+            margin: 10px auto;
+            display: block;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:hover, .scroll-btn:hover, .scroll-to-selected-btn:hover, .scroll-to-top-btn:hover {
+            background-color: #0277bd;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .scroll-btn {
+            animation: bounceIn 1s ease-in-out;
+        }
+
+        .scroll-to-selected-btn {
+            animation: bounceIn 1s ease-in-out 0.5s;
+        }
+
+        .scroll-to-top-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #00acc1;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50%;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-in-out;
+            display: none; /* Hidden by default, shown when scrolling */
+        }
+
+        .count-status {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            transform: rotateX(10deg);
+            animation: pulse 2s infinite;
+            transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .count-status:hover {
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+            transform: rotateX(5deg);
+        }
+
+        .count-status div {
+            font-size: 1em;
+            color: #0288d1;
+        }
+
+        #search-bar, #selected-search-bar {
+            width: calc(100% - 40px);
+            max-width: 600px;
+            padding: 14px;
+            margin: 10px auto;
+            display: block;
+            border: 2px solid #0288d1;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+            background: #ffffff;
+        }
+
+        #search-bar:focus, #selected-search-bar:focus {
+            border-color: #00acc1;
+            box-shadow: 0 0 12px rgba(0, 172, 193, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .container {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            animation: fadeIn 1s ease-out;
+            gap: 20px;
+            margin: 20px;
+            animation: fadeInUp 1s ease-in-out;
         }
+
+        .section {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            transform-style: preserve-3d;
+            transition: transform 0.3s, box-shadow 0.3s;
+            transform: rotateX(-2deg);
+        }
+
+        .section:hover {
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+            transform: rotateX(0deg);
+        }
+
+        .section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #0288d1;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: linear-gradient(145deg, #00acc1, #00838f);
+            color: white;
+            border-radius: 12px;
+            transition: background 0.3s, transform 0.3s;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-in;
+            transform: rotateX(2deg);
+        }
+
+        li:hover {
+            background: linear-gradient(145deg, #00838f, #00acc1);
+            transform: rotateX(0deg) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .client-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .client-name, .voter-id {
+            font-size: 1em;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        h1 {
-            color: #343a40;
-            margin: 20px;
-            font-size: 2.5em;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-            animation: slideIn 1s ease-out;
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 35px 70px rgba(0, 0, 0, 0.5);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            }
         }
-        @keyframes slideIn {
-            from { transform: translateY(-30px); opacity: 0; }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(50px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
-        .count-status {
-            width: 100%;
-            max-width: 900px;
-            margin-bottom: 20px;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            animation: fadeInUp 1s ease-out;
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        #search-bar, #selected-search-bar {
-            width: 100%;
-            max-width: 600px;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ced4da;
-            border-radius: 8px;
-            font-size: 16px;
-            outline: none;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-            transition: border-color 0.3s, box-shadow 0.3s;
-            background-color: #ffffff;
-        }
-        #search-bar:focus, #selected-search-bar:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 12px rgba(0,123,255,0.5);
-        }
-        .search-button {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-            margin-left: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        .search-button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-        }
-        .container {
-            width: 100%;
-            max-width: 900px;
-            padding: 20px;
-        }
-        .section {
-            margin-bottom: 20px;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-            animation: fadeInUp 1s ease-out;
-        }
-        .section h2 {
-            margin-bottom: 15px;
-            color: #007bff;
-            font-size: 1.5em;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
-            position: relative;
-            overflow: hidden;
-            animation: underline 1s ease-out;
-        }
-        @keyframes underline {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        li {
-            background: #ffffff;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: background 0.3s, transform 0.3s;
-            animation: fadeIn 1s ease-out;
-        }
-        li:hover {
-            background: #e9ecef;
-            transform: scale(1.02);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-        }
-        .client-info {
-            display: flex;
-            align-items: center;
-            transition: color 0.3s;
-        }
-        .client-name {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #343a40;
-            margin-left: 10px;
-        }
-        .voter-id {
-            font-size: 0.9em;
-            color: #6c757d;
-            margin-left: 10px;
-        }
-        .btn {
-            padding: 10px 20px;
-            font-size: 16px;
-            color: #ffffff;
-            background-color: #28a745;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            margin: 5px;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
             100% { transform: scale(1); }
         }
-        .btn:hover {
-            background-color: #218838;
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+   
+
+
+
+        /* ... (existing styles) ... */
+
+        /* New styles for the file input button */
+        .file-input-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .file-input-label {
+            background-color: #4CAF50; /* Green background */
+            border: none; /* Remove borders */
+            color: white; /* White text */
+            padding: 10px 20px; /* Add some padding */
+            text-align: center; /* Center the text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Get the element to respect width */
+            font-size: 12px; /* Small font size */
+            margin: 4px 2px; /* Add some margin */
+            cursor: pointer; /* Add a pointer on hover */
+            border-radius: 12px; /* Rounded corners */
+        }
+
+        .file-input-label:hover {
+            background-color: #45a049; /* Darker green on hover */
         }
     </style>
 </head>
 <body>
     <h1>Client Management</h1>
+    <div class="file-input-container">
+        <label for="file-input" class="file-input-label">Browse</label>
+        <input type="file" id="file-input" accept=".xlsx, .xls">
+    </div>
+    <button class="btn" onclick="downloadSelectedClients()">Download Selected Clients</button>
+    <button class="scroll-to-selected-btn" onclick="scrollToSelectedSearch()">Scroll to Selected Search</button>
+    <button class="scroll-to-top-btn" onclick="scrollToTop()">Scroll to Top</button>
     <div class="count-status">
         <div>Total Clients: <span id="total-count">0</span></div>
         <div>Selected Clients: <span id="selected-count">0</span></div>
-        
     </div>
     <input type="text" id="search-bar" placeholder="Search by name or voter ID..." oninput="searchClients()">
     
@@ -190,31 +266,50 @@
             <h2>Selected Clients</h2>
             <div>
                 <input type="text" id="selected-search-bar" placeholder="Search selected clients..." oninput="searchSelectedClients()">
-                <button class="search-button" onclick="searchSelectedClients()">Search</button>
+                <ul id="selected-clients-list"></ul>
             </div>
-            <ul id="selected-clients-list"></ul>
         </div>
     </div>
 
-    
-    <button class="btn" onclick="downloadSelectedClients()">Download Selected Clients</button>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script>
+        let allClients = [];
+        let selectedClients = new Set();
         let totalClients = 0;
         let selectedCount = 0;
-        let removedCount = 0;
-        let allClients = [];  // Array to store all clients data
-        let removedClients = []; // Array to store removed clients
+
+        document.getElementById('file-input').addEventListener('change', handleFileUpload);
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet);
+
+                allClients = json.map(item => ({
+                    Name: item.Name,
+                    VoterID: item.VoterID
+                }));
+                totalClients = allClients.length;
+                updateCounts();
+                updateClientList(allClients);
+            };
+            reader.readAsArrayBuffer(file);
+        }
 
         function searchClients() {
-            const query = document.getElementById('search-bar').value;
-            fetch(`/search?q=${query}`)
-                .then(response => response.json())
-                .then(data => {
-                    allClients = data; // Store the fetched data
-                    updateClientList(data);
-                });
+            const query = document.getElementById('search-bar').value.toLowerCase();
+            const filteredClients = allClients.filter(client =>
+                client.Name.toLowerCase().includes(query) ||
+                client.VoterID.toLowerCase().includes(query)
+            );
+            updateClientList(filteredClients);
         }
 
         function searchSelectedClients() {
@@ -224,25 +319,19 @@
 
             clients.forEach(client => {
                 const name = client.querySelector('.client-name').textContent.toLowerCase();
-                const voterId = client.querySelector('.voter-id').textContent.replace('Voter ID: ', '').toLowerCase();
+                const voterId = client.querySelector('.voter-id').textContent.toLowerCase();
                 const match = name.includes(query) || voterId.includes(query);
-
                 client.style.display = match ? '' : 'none';
             });
-
-            updateSelectedCount(); // Update count to reflect current visible items
         }
 
-        function updateClientList(data) {
+        function updateClientList(clients) {
             const clientsList = document.getElementById('clients-list');
-            clientsList.innerHTML = '';  // Clear the list
-            totalClients = data.length;
-            document.getElementById('total-count').textContent = totalClients;
+            clientsList.innerHTML = '';
 
-            data.forEach(client => {
-                if (!isClientSelected(client['VoterID'])) {
+            clients.forEach(client => {
+                if (!selectedClients.has(client.VoterID)) {
                     const listItem = document.createElement('li');
-
                     const clientInfo = document.createElement('div');
                     clientInfo.className = 'client-info';
 
@@ -254,11 +343,11 @@
 
                     const nameSpan = document.createElement('span');
                     nameSpan.className = 'client-name';
-                    nameSpan.textContent = client['Name'];
+                    nameSpan.textContent = client.Name;
 
                     const voterIdSpan = document.createElement('span');
                     voterIdSpan.className = 'voter-id';
-                    voterIdSpan.textContent = `Voter ID: ${client['VoterID']}`;
+                    voterIdSpan.textContent = `Voter ID: ${client.VoterID}`;
 
                     clientInfo.appendChild(checkbox);
                     clientInfo.appendChild(nameSpan);
@@ -269,35 +358,33 @@
                 }
             });
 
-            // Update the selected count based on current checkboxes
             updateSelectedCount();
         }
 
         function updateCount(checkbox, client) {
             const selectedClientsList = document.getElementById('selected-clients-list');
             const itemIndex = Array.from(selectedClientsList.children).findIndex(item => 
-                item.dataset.id === client['VoterID']
+                item.dataset.id === client.VoterID
             );
 
             if (checkbox.checked) {
                 if (itemIndex === -1) {
                     const listItem = createClientItem(client);
-                    listItem.dataset.id = client['VoterID'];
+                    listItem.dataset.id = client.VoterID;
                     selectedClientsList.appendChild(listItem);
                     selectedCount++;
+                    selectedClients.add(client.VoterID);
                 }
                 totalClients--;
-                removedClients.push(client);  // Add to removed clients list
-                removedCount++;
-                document.querySelector(`#clients-list li:nth-child(${Array.from(document.querySelectorAll('#clients-list li')).findIndex(li => li.textContent.includes(client['VoterID'])) + 1}`).remove();
+                document.querySelector(`#clients-list li:nth-child(${Array.from(document.querySelectorAll('#clients-list li')).findIndex(li => li.textContent.includes(client.VoterID)) + 1}`).remove();
             } else {
                 if (itemIndex !== -1) {
                     selectedClientsList.children[itemIndex].remove();
                     selectedCount--;
+                    selectedClients.delete(client.VoterID);
                 }
                 totalClients++;
-                removedClients = removedClients.filter(c => c['VoterID'] !== client['VoterID']);  // Remove from removed clients list
-                removedCount--;
+                updateClientList(allClients);
             }
 
             updateCounts();
@@ -311,21 +398,17 @@
 
             const nameSpan = document.createElement('span');
             nameSpan.className = 'client-name';
-            nameSpan.textContent = client['Name'];
+            nameSpan.textContent = client.Name;
 
             const voterIdSpan = document.createElement('span');
             voterIdSpan.className = 'voter-id';
-            voterIdSpan.textContent = `Voter ID: ${client['VoterID']}`;
+            voterIdSpan.textContent = `Voter ID: ${client.VoterID}`;
 
             clientInfo.appendChild(nameSpan);
             clientInfo.appendChild(voterIdSpan);
 
             listItem.appendChild(clientInfo);
             return listItem;
-        }
-
-        function isClientSelected(voterId) {
-            return Array.from(document.getElementById('selected-clients-list').children).some(item => item.dataset.id === voterId);
         }
 
         function updateSelectedCount() {
@@ -335,32 +418,7 @@
 
         function updateCounts() {
             document.getElementById('total-count').textContent = totalClients;
-            document.getElementById('selected-count').textContent = selectedCount;
-            document.getElementById('removed-count').textContent = removedCount;
-        }
-
-        function downloadRemovedClients() {
-            fetch('/export-removed')
-                .then(response => {
-                    if (response.ok) {
-                        return response.blob();
-                    } else {
-                        throw new Error('Failed to download file');
-                    }
-                })
-                .then(blob => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'removed_clients.xlsx';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                })
-                .catch(error => {
-                    alert('Error downloading file: ' + error.message);
-                });
+            updateSelectedCount();
         }
 
         function downloadSelectedClients() {
@@ -379,7 +437,6 @@
             const ws = XLSX.utils.json_to_sheet(selectedClients);
             XLSX.utils.book_append_sheet(wb, ws, 'Selected Clients');
 
-            // Create a summary sheet for selected clients count
             const summary = [{ Description: "Total Selected Clients", Count: selectedClients.length }];
             const wsSummary = XLSX.utils.json_to_sheet(summary);
             XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
@@ -387,8 +444,28 @@
             XLSX.writeFile(wb, 'selected_clients.xlsx');
         }
 
-        // Initial load
-        searchClients();
+        function scrollToSearch() {
+            document.getElementById('search-bar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function scrollToSelectedSearch() {
+            document.getElementById('selected-search-bar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function handleScroll() {
+            const scrollToTopBtn = document.querySelector('.scroll-to-top-btn');
+            if (window.scrollY > 200) {
+                scrollToTopBtn.style.display = 'block';
+            } else {
+                scrollToTopBtn.style.display = 'none';
+            }
+        }
+
+        window.addEventListener('scroll', handleScroll);
     </script>
 </body>
 </html>
